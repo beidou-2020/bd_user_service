@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	scan：表示配置文件如果发生改变，将会被重新加载，默认值为true。
+	scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。
+				当scan为true时，此属性生效。默认的时间间隔为1分钟。(这里设置10分钟)
+	debug：当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
+ -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <!--定义日志文件的存储地址，勿在LogBack的配置中使用相对路径 -->
+    <property name="log_home" value="C:/zxz_log/java/bd_user_service" />
+    <property name="log_pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" />
+    
+    <!-- 控制台输出 -->
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        	<!--格式化输出：%d表示日期；%thread表示线程名；%-5level：级别从左显示5个字符宽度；%msg：日志消息；%n是换行符-->
+            <pattern>${log_pattern}</pattern>
+        </encoder>
+    </appender>
+
+	<!-- info日志 -->
+    <!-- 滚动日志记录，将系统日志记录到指定文件中 -->
+    <appender name="infoLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    	<!-- 只输出info级别的日志到指定文件中 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>  <!-- 如果命中就禁止这条日志 -->
+            <onMismatch>ACCEPT</onMismatch>  <!-- 如果没有命中就使用这条规则 -->
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log_home}/%d{yyyy-MM-dd}/info-%i.log</fileNamePattern>>
+            <maxFileSize>100KB</maxFileSize>
+            <maxHistory>1</maxHistory>
+            <totalSizeCap>20MB</totalSizeCap>
+        </rollingPolicy>
+        <!-- encoder：对记录事件进行格式化。负责两件事，一是把日志信息转换成字节数组，二是把字节数组写入到输出流。 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        	<charset>UTF-8</charset>
+            <pattern>${log_pattern}</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- error日志 -->
+    <appender name="errorLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender"> 
+    	<!-- 只输出error级别的日志到指定文件中，
+    	【注意：程序运行时产生的异常是不会写入到文件中，可以通过全局异常统一处理的地方使用logger.error的方式打印到文件中】 -->
+	   	<filter class="ch.qos.logback.classic.filter.ThresholdFilter">   
+	     	<level>error</level>   
+	   	</filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log_home}/%d{yyyy-MM-dd}/error-%i.log</fileNamePattern>>
+            <maxFileSize>100KB</maxFileSize>
+            <maxHistory>2</maxHistory>
+            <totalSizeCap>20MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        	<charset>UTF-8</charset>
+            <pattern>${log_pattern}</pattern>
+        </encoder>
+    </appender>
+
+
+	<!-- logger：用来设置某一个包或具体的某一个类的日志打印级别。 
+			name: 用来指定受此logger约束的某一个包或者具体的某一个类。
+			level: 用来设置打印级别，大小写无关。
+	-->
+	<!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
+	<!-- <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
+	<logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG" />
+	<logger name="org.hibernate.SQL" level="DEBUG" />
+	<logger name="org.hibernate.engine.QueryParameters" level="DEBUG" />
+	<logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG" /> -->
+	<!-- mybatis配置专用 -->
+    <logger name="com.apache.ibatis" level="TRACE"/>
+	<logger name="java.sql.Connection" level="DEBUG"/>
+	<logger name="java.sql.Statement" level="DEBUG"/>
+	<logger name="java.sql.PreparedStatement" level="DEBUG"/>
+	<!-- 自定义配置：将mapper层的SQL语句，参数等信息输出 -->
+	<logger name="com.bd.repository" level="debug"/>
+
+	<!-- root：它也是<logger>元素，表示一个根logger，是所有<logger>的上级。只有一个level属性。
+				级别大小：TRACE<DEBUG<INFO<WARN<ERROR<FATAL。如果设置为info，则低于info的日志都不会打印。
+	 -->
+    <root level="info">
+    	<!-- 将日志输出到对应的Appender里去 -->
+        <appender-ref ref="consoleLog" />
+        <appender-ref ref="infoLogFile" />
+        <appender-ref ref="errorLogFile" />
+    </root>
+</configuration>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bd.repository.UserMapper" >
+
+    <resultMap id="BaseResultMap" type="com.bd.entitys.model.User" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="ACCOUNT" property="account" jdbcType="VARCHAR" />
+        <result column="PASSWORD" property="password" jdbcType="CHAR" />
+        <result column="NAME" property="name" jdbcType="VARCHAR" />
+        <result column="gender" property="gender" jdbcType="INTEGER" />
+        <result column="TELEPHONE" property="telephone" jdbcType="CHAR" />
+        <result column="user_type" property="userType" jdbcType="INTEGER" />
+        <result column="valid_mark" property="validMark" jdbcType="INTEGER" />
+        <result column="CREATETIME" property="createtime" jdbcType="TIMESTAMP" />
+        <result column="updatetime" property="updatetime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, ACCOUNT, password, name, gender, TELEPHONE, user_type, valid_mark, CREATETIME, updatetime
+    </sql>
+    
+    <!-- 校验用户的账号和密码 -->
+    <select id="login" resultType="com.bd.entitys.model.User">
+        select 
+        <include refid="Base_Column_List" />
+        from t_user
+        where valid_mark = 1
+        and ACCOUNT = #{account,jdbcType=VARCHAR}
+        and password = #{password,jdbcType=VARCHAR}
+    </select>
+    
+    <!-- 根据复合条件获取用户列表 -->
+    <select id="findAllByQuery" resultMap="BaseResultMap" parameterType="com.bd.entitys.query.UserQuery" >
+        select 
+        <include refid="Base_Column_List" />
+        from t_user
+        where valid_mark = 1
+        <if test="account != null and account != '' " >
+            and ACCOUNT like concat(#{account,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="name != null and name != '' " >
+            and NAME like concat('%', #{name,jdbcType=VARCHAR}, '%')
+        </if>
+        <if test="gender != null" >
+            and gender = #{gender,jdbcType=INTEGER}
+        </if>
+        <if test="userType != null" >
+            and user_type = #{userType,jdbcType=INTEGER}
+        </if>
+        order by createtime desc
+    </select>
+    
+    <!-- 查询用户列表 -->
+    <select id="findAll" resultMap="BaseResultMap">
+        select 
+        <include refid="Base_Column_List" />
+        from t_user limit 50000
+    </select>
+    
+    <!-- 根据账号获取用户详情 -->
+    <select id="findByAccount" resultType="com.bd.entitys.model.User" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from t_user
+        where account = #{account,jdbcType=VARCHAR}
+        limit 1
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select 
+        <include refid="Base_Column_List" />
+        from t_user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+        delete from t_user
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <update id="deleteFalse" parameterType="java.lang.Long">
+        update t_user
+        set valid_mark = 0
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insertSelective" parameterType="com.bd.entitys.model.User"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="account != null" >
+                ACCOUNT,
+            </if>
+            <if test="password != null" >
+                password,
+            </if>
+            <if test="name != null" >
+                NAME,
+            </if>
+            <if test="gender != null" >
+                gender,
+            </if>
+            <if test="telephone != null" >
+                TELEPHONE,
+            </if>
+            <if test="userType != null" >
+                user_type,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="account != null" >
+                #{account,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                #{password,jdbcType=CHAR},
+            </if>
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null" >
+                #{gender,jdbcType=INTEGER},
+            </if>
+            <if test="telephone != null" >
+                #{telephone,jdbcType=CHAR},
+            </if>
+            <if test="userType != null" >
+                #{userType,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    
+    <!-- 批量导入用户信息 -->
+    <insert id="insertBatch" parameterType="java.util.List">
+	    insert into t_user
+	    (account, password, name, telephone)
+	    values
+	    <foreach collection ="list" item="user" index= "index" separator =",">
+	      (#{user.account}, #{user.password}, #{user.name}, #{user.telephone})
+	    </foreach>
+  	</insert>
+
+	<!-- 根据ID更新用户信息 -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.bd.entitys.model.User" >
+        update t_user
+        <set >
+            <if test="account != null" >
+                ACCOUNT = #{account,jdbcType=VARCHAR},
+            </if>
+            <!--<if test="password != null" >
+                password = #{password,jdbcType=CHAR},
+            </if>-->
+            <if test="name != null" >
+                NAME = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="gender != null" >
+                gender = #{gender,jdbcType=INTEGER},
+            </if>
+            <if test="telephone != null" >
+                TELEPHONE = #{telephone,jdbcType=CHAR},
+            </if>
+            <if test="userType != null" >
+                user_type = #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="updatetime != null" >
+                updatetime = #{updatetime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>
