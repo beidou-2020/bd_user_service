@@ -7,7 +7,8 @@ spring:
   application:
     name: user-service
   profiles:
-    active: dev
+    # 这里激活那种数据库类型，记得需要去配置下分页插件的数据库方言
+    active: devOracle
   cloud:
     # 服务提供方
     consul:
