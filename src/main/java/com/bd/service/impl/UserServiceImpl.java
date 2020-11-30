@@ -132,4 +132,10 @@ public class UserServiceImpl implements UserService {
 	public User findByAccount(String account) {
 		return userMapper.findByAccount(account);
 	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
+	public Long batchInsertUserInfo(Long userNum) {
+		return null;
+	}
 }

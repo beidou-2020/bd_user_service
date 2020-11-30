@@ -66,4 +66,11 @@ public interface UserService {
 	 * @return
 	 */
 	User findByAccount(String account);
+
+	/**
+	 * 批量导入用户数据(信息随机生成)
+	 * @param userNum
+	 * @return
+	 */
+	Long batchInsertUserInfo(Long userNum);
 }
