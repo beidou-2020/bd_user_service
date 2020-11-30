@@ -97,6 +97,7 @@ public class UserServiceImpl implements UserService {
 		try{
 			User user = new User();
 			BeanUtil.copyProperties(updateUserDTO, user);
+			// 设置修改时间
 			user.setUpdatetime(new Date());
 			userMapper.updateByPrimaryKeySelective(user);
 			return user;
