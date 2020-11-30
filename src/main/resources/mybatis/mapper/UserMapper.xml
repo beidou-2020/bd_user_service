@@ -63,7 +63,7 @@
         <include refid="Base_Column_List" />
         from t_user
         where account = #{account,jdbcType=VARCHAR}
-        limit 1
+        and 2 > rownum
     </select>
 
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -174,4 +174,9 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
+    <!--获取当前最大的主键值-->
+    <select id="getCurrMaxPrimaryKey" resultType="java.lang.Long">
+        select max(id)
+        from beidou.t_user
+    </select>
 </mapper>

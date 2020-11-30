@@ -68,4 +68,10 @@ public interface UserMapper {
      * @return
      */
     List<User> findAllByQuery(UserQuery userQuery);
+
+    /**
+     * 获取当前最大的主键值
+     * @return
+     */
+    Long getCurrMaxPrimaryKey();
 }

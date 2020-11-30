@@ -22,6 +22,7 @@ import com.bd.service.UserService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,6 +45,10 @@ public class UserServiceImpl implements UserService {
 		try{
 			User user = new User();
 			BeanUtil.copyProperties(userInfo, user);
+			// todo：这里要考虑并发造成的主键逻辑冲突。因为oracle默认读不加锁
+			Long primaryKeyValue = getPrimaryKeyValue();
+			log.info("注册用户时生成的主键值：{}", JSONObject.toJSONString(primaryKeyValue));
+			user.setId(primaryKeyValue);
 			userMapper.insertSelective(user);
 			return user;
 		}catch (Exception ex){
@@ -65,6 +70,10 @@ public class UserServiceImpl implements UserService {
 		try{
 			User user = new User();
 			BeanUtil.copyProperties(addUserDTO, user);
+			// todo：这里要考虑并发造成的主键逻辑冲突。因为oracle默认读不加锁
+			Long primaryKeyValue = getPrimaryKeyValue();
+			log.info("添加用户信息生成的主键值：{}", JSONObject.toJSONString(primaryKeyValue));
+			user.setId(primaryKeyValue);
 			userMapper.insertSelective(user);
 			return user;
 		}catch (Exception ex){
@@ -73,12 +82,22 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	/**
+	 * 逻辑获取本次新增数据的主键值
+	 * @return
+	 */
+	private Long getPrimaryKeyValue(){
+		Long currMaxPrimaryKey = userMapper.getCurrMaxPrimaryKey();
+		return ++currMaxPrimaryKey;
+	}
+
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
 	public User update(UpdateUserDTO updateUserDTO) {
 		try{
 			User user = new User();
 			BeanUtil.copyProperties(updateUserDTO, user);
+			user.setUpdatetime(new Date());
 			userMapper.updateByPrimaryKeySelective(user);
 			return user;
 		}catch (Exception ex){
@@ -106,5 +125,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findById(Long id) {
 		return userMapper.selectByPrimaryKey(id);
+	}
+
+	@Override
+	public User findByAccount(String account) {
+		return userMapper.findByAccount(account);
 	}
 }

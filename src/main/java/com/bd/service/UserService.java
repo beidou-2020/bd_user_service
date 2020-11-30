@@ -59,4 +59,11 @@ public interface UserService {
 	 * @return
 	 */
 	User findById(Long id);
+
+	/**
+	 * 根据用户账号获取信息
+	 * @param account
+	 * @return
+	 */
+	User findByAccount(String account);
 }

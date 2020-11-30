@@ -1,5 +1,6 @@
 package com.bd.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bd.controller.common.Result;
 import com.bd.entitys.dto.AddUserDTO;
 import com.bd.entitys.dto.PageParam;
@@ -12,6 +13,7 @@ import com.bd.entitys.query.UserQuery;
 import com.bd.service.UserService;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -47,9 +49,15 @@ public class UserController {
     @PostMapping(value = "/register")
     @ResponseBody
     public Result register(@RequestBody @Valid RegisterUserParame userInfoParame) {
+        String account = userInfoParame.getAccount();
+        User userInfo = userService.findByAccount(account);
+        if (Objects.nonNull(userInfo)){
+            log.error("{}的用户信息已经存在，userInfo:{}。", account, JSONObject.toJSONString(userInfo));
+            return Result.fail(ResultCode.PARAM_ERROR.code(), ResultCode.PARAM_ERROR.msg());
+        }
         User user = userService.insertUserInfo(userInfoParame);
         if (Objects.isNull(user)){
-            return Result.fail(ResultCode.SERVER_ERROR.code(), "服务器异常：注册用户失败！");
+            return Result.fail(ResultCode.SERVER_ERROR.code(), ResultCode.SERVER_ERROR.msg());
         }
         return Result.ok(user);
     }
@@ -75,9 +83,16 @@ public class UserController {
     @PostMapping("/add")
     @ResponseBody
     public Result add(@RequestBody @Valid AddUserDTO addUserDTO){
+        String account = addUserDTO.getAccount();
+        User userInfo = userService.findByAccount(account);
+        if (Objects.nonNull(userInfo)){
+            log.error("{}的用户信息已经存在，userInfo:{}", account, JSONObject.toJSONString(userInfo));
+            return Result.fail(ResultCode.PARAM_ERROR.code(), ResultCode.PARAM_ERROR.msg());
+        }
+
         User user = userService.add(addUserDTO);
         if (Objects.isNull(user)){
-            return Result.fail(ResultCode.SERVER_ERROR.code(), "服务器异常：添加用户失败！");
+            return Result.fail(ResultCode.SERVER_ERROR.code(), ResultCode.ERROR.msg());
         }
         return Result.ok(user);
     }
