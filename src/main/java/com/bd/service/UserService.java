@@ -72,5 +72,5 @@ public interface UserService {
 	 * @param userNum
 	 * @return
 	 */
-	Long batchInsertUserInfo(Long userNum);
+	Integer batchInsertUserInfo(Long userNum);
 }

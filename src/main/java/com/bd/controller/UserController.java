@@ -93,6 +93,7 @@ public class UserController {
         if (Objects.isNull(user)){
             return Result.fail(ResultCode.SERVER_ERROR.code(), ResultCode.ERROR.msg());
         }
+        log.info("添加成功后的用户信息为: {}", JSONObject.toJSONString(user));
         return Result.ok(user);
     }
 
@@ -136,5 +137,17 @@ public class UserController {
     public Result userDetails(@PathVariable(name = "id") Long id){
         User userInfo = userService.findById(id);
         return Result.ok(userInfo);
+    }
+
+    /**
+     * 批量插入用户信息
+     * @param userNumber
+     * @return
+     */
+    @PostMapping("/batchInsert/{userNumber}")
+    @ResponseBody
+    public Result batchInsert(@PathVariable("userNumber") Long userNumber){
+        Integer insertNum = userService.batchInsertUserInfo(userNumber);
+        return Result.ok(insertNum);
     }
 }

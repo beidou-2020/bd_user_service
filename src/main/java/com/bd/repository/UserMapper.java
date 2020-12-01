@@ -33,7 +33,7 @@ public interface UserMapper {
      * @param list
      * @return
      */
-    int insertBatch(@Param("list") List<User> list);
+    Integer insertBatch(@Param("list") List<User> list);
 
     /**
      * 根据ID获取用户详情

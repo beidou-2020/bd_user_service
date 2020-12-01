@@ -84,8 +84,11 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <insert id="insertSelective" parameterType="com.bd.entitys.model.User"
-            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    <insert id="insertSelective" parameterType="com.bd.entitys.model.User">
+        /*获取指定序列的值作为主键，并返回主键*/
+        <selectKey keyProperty="id" resultType="java.lang.Long" order="BEFORE">
+            select beidou.seq_t_user_id.nextval from dual
+        </selectKey>
         insert into t_user
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="id != null" >
@@ -136,17 +139,41 @@
     </insert>
     
     <!-- 批量导入用户信息 -->
-    <insert id="insertBatch" parameterType="java.util.List">
-	    insert into t_user
-	    (id, account, password, name, telephone)
-	    values
-	    <foreach collection ="list" item="user" index= "index" separator ="," open="(" close=")">
-          #{user.id},
-	      #{user.account},
-          #{user.password},
-          #{user.name},
-          #{user.telephone}
-	    </foreach>
+    <insert id="insertBatch" parameterType="java.util.List" useGeneratedKeys="false">
+        <!--insert all
+        <foreach collection="list" item="user" index="index">
+            into beidou.t_user(account, password, name, telephone)
+            values
+            (#{user.account, jdbcType=VARCHAR},
+            #{user.password, jdbcType=VARCHAR},
+            #{user.name, jdbcType=VARCHAR},
+            #{user.telephone, jdbcType=VARCHAR})
+        </foreach>
+        select 1 from dual-->
+
+        insert into beidou.t_user(id, account, password, name, telephone)
+        select beidou.seq_t_user_id.nextval, userTab.* from
+        (
+        <foreach collection="list" item="user" index="index" separator="union all">
+            select
+            #{user.account, jdbcType=VARCHAR},
+            #{user.password, jdbcType=VARCHAR},
+            #{user.name, jdbcType=VARCHAR},
+            #{user.telephone, jdbcType=VARCHAR}
+            from dual
+        </foreach>
+        ) userTab
+
+        <!--begin
+        <foreach collection="list" item="user" index="index" separator=";">
+            insert into beidou.t_user(account, password, name, telephone)
+            values
+            (#{user.account, jdbcType=VARCHAR},
+            #{user.password, jdbcType=VARCHAR},
+            #{user.name, jdbcType=VARCHAR},
+            #{user.telephone, jdbcType=VARCHAR})
+        </foreach>
+        ; end;-->
   	</insert>
 
 	<!-- 根据ID更新用户信息 -->

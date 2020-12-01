@@ -11,6 +11,7 @@ import com.bd.entitys.parame.RegisterUserParame;
 import com.bd.entitys.query.UserQuery;
 import com.bd.repository.UserMapper;
 import com.bd.utils.BeanUtil;
+import com.bd.utils.NamePhoneUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +23,7 @@ import com.bd.service.UserService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service(value = "userService")
 @Slf4j
@@ -46,9 +44,10 @@ public class UserServiceImpl implements UserService {
 			User user = new User();
 			BeanUtil.copyProperties(userInfo, user);
 			// todo：这里要考虑并发造成的主键逻辑冲突。因为oracle默认读不加锁
-			Long primaryKeyValue = getPrimaryKeyValue();
+			// 如果使用序列和触发器的方式则无需考虑
+			/*Long primaryKeyValue = getPrimaryKeyValue();
 			log.info("注册用户时生成的主键值：{}", JSONObject.toJSONString(primaryKeyValue));
-			user.setId(primaryKeyValue);
+			user.setId(primaryKeyValue);*/
 			userMapper.insertSelective(user);
 			return user;
 		}catch (Exception ex){
@@ -71,9 +70,10 @@ public class UserServiceImpl implements UserService {
 			User user = new User();
 			BeanUtil.copyProperties(addUserDTO, user);
 			// todo：这里要考虑并发造成的主键逻辑冲突。因为oracle默认读不加锁
-			Long primaryKeyValue = getPrimaryKeyValue();
+			// 如果使用序列和触发器的方式则无需考虑
+			/*Long primaryKeyValue = getPrimaryKeyValue();
 			log.info("添加用户信息生成的主键值：{}", JSONObject.toJSONString(primaryKeyValue));
-			user.setId(primaryKeyValue);
+			user.setId(primaryKeyValue);*/
 			userMapper.insertSelective(user);
 			return user;
 		}catch (Exception ex){
@@ -134,8 +134,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, readOnly = false)
-	public Long batchInsertUserInfo(Long userNum) {
-		return null;
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public Integer batchInsertUserInfo(Long userNum) {
+		List<User> list = new ArrayList<>(1024 * 10 *10);
+		for (long i = 0; i < userNum; i++) {
+			User itemUser = new User();
+			String telephone = NamePhoneUtils.getTel();
+			itemUser.setAccount(telephone);
+			itemUser.setPassword("123456");
+			itemUser.setName(NamePhoneUtils.getChineseName());
+			itemUser.setTelephone(telephone);
+			log.info("随机生成的用户信息: {}", JSONObject.toJSONString(itemUser));
+			list.add(itemUser);
+		}
+
+		Integer insertNumber = userMapper.insertBatch(list);
+		return insertNumber;
 	}
 }

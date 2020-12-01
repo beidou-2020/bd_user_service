@@ -30,7 +30,7 @@
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${log_home}/%d{yyyy-MM-dd}/info-%i.log</fileNamePattern>>
-            <maxFileSize>100KB</maxFileSize>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>1</maxHistory>
             <totalSizeCap>20MB</totalSizeCap>
         </rollingPolicy>
@@ -50,7 +50,7 @@
 	   	</filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${log_home}/%d{yyyy-MM-dd}/error-%i.log</fileNamePattern>>
-            <maxFileSize>100KB</maxFileSize>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>2</maxHistory>
             <totalSizeCap>20MB</totalSizeCap>
         </rollingPolicy>
