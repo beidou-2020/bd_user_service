@@ -16,7 +16,7 @@ import java.util.TimeZone;
 @JsonComponent
 public class ReturnDateFormatConfig {
 
-    @Value("${spring.jackson.date-format:yyyy-MM-dd}")
+    @Value("${spring.jackson.date-format:yyyy-MM-dd HH:mm:ss}")
     private String pattern;
 
     /**

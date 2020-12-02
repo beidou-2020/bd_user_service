@@ -74,4 +74,11 @@ public interface UserMapper {
      * @return
      */
     Long getCurrMaxPrimaryKey();
+
+    /**
+     * 批量删除用户信息
+     * @param List
+     * @return
+     */
+    Integer batchDelete(@Param("list") List<Long> List);
 }

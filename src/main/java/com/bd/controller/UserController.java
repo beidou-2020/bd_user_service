@@ -13,6 +13,8 @@ import com.bd.entitys.query.UserQuery;
 import com.bd.service.UserService;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.lf5.viewer.LogFactor5ErrorDialog;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -149,5 +151,22 @@ public class UserController {
     public Result batchInsert(@PathVariable("userNumber") Long userNumber){
         Integer insertNum = userService.batchInsertUserInfo(userNumber);
         return Result.ok(insertNum);
+    }
+
+    /**
+     * 批量删除用户信息
+     * @param idListStr
+     * @return
+     */
+    @PostMapping("/batchDelete/{idListStr}")
+    @ResponseBody
+    public Result batchDelete(@PathVariable("idListStr") String idListStr){
+        if (StringUtils.isEmpty(idListStr)){
+            log.error("批量删除用户信息时参数为空，param: {}", idListStr);
+            return Result.fail(ResultCode.PARAM_ERROR.code(), ResultCode.PARAM_ERROR.msg());
+        }
+
+        Integer batchDelete = userService.batchDelete(idListStr);
+        return Result.ok(batchDelete);
     }
 }

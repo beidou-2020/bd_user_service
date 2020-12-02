@@ -22,8 +22,10 @@ import org.springframework.stereotype.Service;
 import com.bd.service.UserService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service(value = "userService")
 @Slf4j
@@ -150,5 +152,23 @@ public class UserServiceImpl implements UserService {
 
 		Integer insertNumber = userMapper.insertBatch(list);
 		return insertNumber;
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public Integer batchDelete(String idListStr) {
+		List<Long> idList;
+		try{
+			idList = Arrays.stream(idListStr.split(",")).
+					map(id -> Long.parseLong(id)).collect(Collectors.toList());
+			if (CollectionUtils.isEmpty(idList)){
+				return 0;
+			}
+		}catch (Exception ex){
+			log.error("批量删除时，参数转换异常。", ex);
+			return 0;
+		}
+		Integer batchDelete = userMapper.batchDelete(idList);
+		return batchDelete;
 	}
 }

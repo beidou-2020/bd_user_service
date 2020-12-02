@@ -31,8 +31,12 @@
     
     <!-- 根据复合条件获取用户列表 -->
     <select id="findAllByQuery" resultMap="BaseResultMap" parameterType="com.bd.entitys.query.UserQuery" >
-        select 
-        <include refid="Base_Column_List" />
+        select
+        id,
+        substr(telephone, 1, 3) || '*********' as ACCOUNT,
+        name, gender,
+        substr(telephone, 1, 3) || '*****' || substr(telephone, length(telephone) - 3) as TELEPHONE,
+        user_type, valid_mark, CREATETIME, updatetime
         from t_user
         where valid_mark = 1
         <if test="account != null and account != '' " >
@@ -210,4 +214,14 @@
         select max(id)
         from beidou.t_user
     </select>
+
+    <!--批量删除用户信息-->
+    <update id="batchDelete" parameterType="java.util.List">
+        update t_user
+        set valid_mark = 0
+        where id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id,jdbcType=BIGINT}
+        </foreach>
+    </update>
 </mapper>
