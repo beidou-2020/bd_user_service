@@ -171,4 +171,20 @@ public class UserServiceImpl implements UserService {
 		Integer batchDelete = userMapper.batchDelete(idList);
 		return batchDelete;
 	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public Integer destoryInvalidUserPwdByProce() {
+		HashMap map = new HashMap();
+		userMapper.destoryInvalidUserPwdByProce(map);
+		log.info("存储过程调用成功，beidou.user_service_pack.destoryInvalidUserPwd的结果为：{}",
+				JSONObject.toJSONString(map));
+		// 获取出参值
+		Object dealwith = map.get("DealwithNum");
+		if (Objects.isNull(dealwith)){
+			return -1;
+		}
+
+		return (Integer) dealwith;
+	}
 }

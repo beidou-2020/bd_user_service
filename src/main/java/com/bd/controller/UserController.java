@@ -13,6 +13,7 @@ import com.bd.entitys.query.UserQuery;
 import com.bd.service.UserService;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import oracle.ucp.proxy.annotation.Post;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.lf5.viewer.LogFactor5ErrorDialog;
 import org.springframework.web.bind.annotation.*;
@@ -168,5 +169,19 @@ public class UserController {
 
         Integer batchDelete = userService.batchDelete(idListStr);
         return Result.ok(batchDelete);
+    }
+
+    /**
+     * [调用存储过程]：清空已被删除用户的密码信息
+     * @return
+     */
+    @PostMapping("/destoryInvalidUserPwd")
+    @ResponseBody
+    public Result destoryInvalidUserPwd(){
+        Integer DealwithNum = userService.destoryInvalidUserPwdByProce();
+        if (-1 == DealwithNum){
+            return Result.fail(ResultCode.PROCE_ERROR.code(), ResultCode.PROCE_ERROR.msg());
+        }
+        return Result.ok(DealwithNum);
     }
 }

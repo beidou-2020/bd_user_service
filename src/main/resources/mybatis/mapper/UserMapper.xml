@@ -224,4 +224,9 @@
             #{id,jdbcType=BIGINT}
         </foreach>
     </update>
+
+    <!--[调用存储过程]：清空已被删除用户的密码信息-->
+    <select id="destoryInvalidUserPwdByProce" statementType="CALLABLE" parameterType="map">
+        {call beidou.user_service_pack.destoryInvalidUserPwd(#{DealwithNum, mode=OUT, jdbcType=INTEGER})}
+    </select>
 </mapper>

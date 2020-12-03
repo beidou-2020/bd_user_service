@@ -5,6 +5,7 @@ import com.bd.entitys.query.UserQuery;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Map;
 
 
 @Repository(value = "UserMapper")
@@ -81,4 +82,10 @@ public interface UserMapper {
      * @return
      */
     Integer batchDelete(@Param("list") List<Long> List);
+
+    /**
+     * [调用存储过程]：清空已被删除用户的密码信息
+     * @return
+     */
+    void destoryInvalidUserPwdByProce(Map<String, Object> map);
 }

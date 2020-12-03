@@ -80,4 +80,10 @@ public interface UserService {
 	 * @return
 	 */
 	Integer batchDelete(String idListStr);
+
+	/**
+	 * [调用存储过程]：清空已被删除用户的密码信息
+	 * @return
+	 */
+	Integer destoryInvalidUserPwdByProce();
 }

@@ -17,7 +17,8 @@ public enum ResultCode {
     RESPONSE_BODY_NULL(507, "下游服务返回body体为空"),
     RESPONSE_CODE_NULL(508, "下游服务返回code为空"),
     RESPONSE_NULL(509, "下游服务response为空"),
-    PARAM_WRONG(1001, "参数不合法,请检查数据重新操作！");
+    PARAM_WRONG(1001, "参数不合法,请检查数据重新操作！"),
+    PROCE_ERROR(2001, "调用存储过程失败");
 
     ResultCode(int code , String msg) {
         this.code = code;
