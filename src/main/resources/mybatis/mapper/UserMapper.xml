@@ -43,7 +43,7 @@
             and ACCOUNT like concat(#{account,jdbcType=VARCHAR}, '%')
         </if>
         <if test="name != null and name != '' " >
-            and NAME like concat('%', #{name,jdbcType=VARCHAR}, '%')
+            and name like concat(concat('%', #{name,jdbcType=VARCHAR}), '%')
         </if>
         <if test="gender != null" >
             and gender = #{gender,jdbcType=INTEGER}

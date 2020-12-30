@@ -65,6 +65,11 @@ public interface UserMapper {
     
     /**
      * 根据复合条件获取用户列表
+     *
+     * 【模糊查询时注意】
+     *  MySQL中concat函数可以连接多个字符串，但是Oracle中最多只能连接2个字符。
+     * 如果连接2个以上必须嵌套使用，否则提示{java.sql.SQLSyntaxErrorException: ORA-00909: 参数个数无效}。
+     *
      * @param userQuery
      * @return
      */

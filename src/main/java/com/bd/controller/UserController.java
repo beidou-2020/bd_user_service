@@ -70,7 +70,7 @@ public class UserController {
      */
     @GetMapping(value = "/list", produces = "application/json;charset=utf-8")
     @ResponseBody
-    public Result list(UserQuery query, PageParam pageParam){
+    public Result list(UserQuery query, @Valid PageParam pageParam){
         PageInfo<User> pageInfo = userService.listByPage(query, pageParam);
         return Result.ok(pageInfo);
     }
