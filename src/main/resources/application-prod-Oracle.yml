@@ -1,7 +1,7 @@
 spring:
   datasource:
     druid:
-      url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl
+      url: jdbc:oracle:thin:@//192.168.101.12:1521/orcl
       username: beidou
       password: beidou
       driver-class-name: oracle.jdbc.driver.OracleDriver

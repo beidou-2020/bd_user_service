@@ -3,33 +3,11 @@ server:
   port: 9090
 
 spring:
-    # 注册到eureka的服务名称
-  application:
-    name: user-service
   profiles:
-    # 这里激活那种数据库类型，记得需要去配置下分页插件的数据库方言
-    active: devOracle
-  cloud:
-    # 服务提供方
-    consul:
-      discovery:
-        # 启用服务发现
-        # enabled: true
-        # 启用服务注册
-        register: true
-        # 服务停止时取消注册
-        deregister: true
-        # 表示注册时使用IP而不是hostname
-        prefer-ip-address: true
-        # 注册成功后的唯一标识
-        instance-id: ${spring.application.name}
-        # 注册成功后的服务名称
-        service-name: ${spring.application.name}
-      host: 127.0.0.1
-      port: 8500
+    active: prod-Oracle
 
-# mybatis集成
+# mybatis集成Oracle
 mybatis:
-  config-location: classpath:mybatis/config/mybatis-config.xml
+  config-location: classpath:mybatis/config/mybatis-config-Oracle.xml
   mapper-locations: classpath:mybatis/mapper/*.xml
 

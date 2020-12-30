@@ -1,10 +1,31 @@
 spring:
+  # 注册到eureka的服务名称
+  application:
+    name: user-service
+  cloud:
+    # 服务提供方
+    consul:
+      discovery:
+        # 启用服务发现
+        # enabled: true
+        # 启用服务注册
+        register: false
+        # 服务停止时取消注册
+        deregister: true
+        # 表示注册时使用IP而不是hostname
+        prefer-ip-address: true
+        # 注册成功后的唯一标识
+        instance-id: ${spring.application.name}
+        # 注册成功后的服务名称
+        service-name: ${spring.application.name}
+      host: 127.0.0.1
+      port: 8500
   datasource:
     druid:
-      url: jdbc:mysql://127.0.0.1:3306/beidou?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&useSSL=false
-      username: root
-      password: rootroot
-      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:oracle:thin:@//127.0.0.1:1521/orcl
+      username: beidou
+      password: beidou
+      driver-class-name: oracle.jdbc.driver.OracleDriver
       # 初始化物理连接个数
       initial-size: 1
       # 最大连接池数量
@@ -14,11 +35,11 @@ spring:
       # 获取连接时最大等待时间(ms)
       max-wait: 60000
       # 开启缓存preparedStatement(PSCache)【mysql不支持游标建议不开启该配置】
-      # pool-prepared-statements: false
+      pool-prepared-statements: true
       # 启用PSCache后，指定每个连接上PSCache的大小
       # max-pool-prepared-statement-per-connection-size: 20
       # 用来检测连接是否有效的sql
-      validation-query: select 'x'
+      validation-query: select 1 from dual
       # 申请连接时检测连接是否有效
       test-on-borrow: false
       # 归还连接时不检测连接是否有效
